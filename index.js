@@ -1,17 +1,24 @@
 'use strict';
 
-var pkg = require('./package.json'),
+var express= require('express'),
+pkg = require('./package.json'),
 _ = require('underscore');
 
 module.exports = function(config){
-
-
   var configuration = _.defaults({}, config, {
-   // ad defaults here
+   // add defaults here
+    errors : {}
   });
 
-  return {
-    version : pkg.version
-  };
-
+  var app = express();
+  app.all('*',function(req, res){
+    // bounce as error
+  
+    var meta = _.extend({date : new Date()}, _.pick(req, 'path'));
+    var response = _.extend(meta, req.query, req.body);
+    res.json(response);
+  });
+  app.use(app.router);
+  app.version = pkg.version;
+  return app;
 };
