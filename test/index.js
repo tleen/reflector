@@ -7,14 +7,14 @@ url = require('url'),
 _ = require('underscore');
 
 describe('versioning', function(){
-  var bounceback = require('..')();
+  var reflector = require('..')();
   it('should have a version matching package', function(){
-    bounceback.should.have.property('version').and.be.exactly(pkg.version);
+    reflector.should.have.property('version').and.be.exactly(pkg.version);
   });
 });
 
 describe('server', function(){
-  var bounceback = require('..')();
+  var reflector = require('..')();
   var port = 8111;
 
   var testUrl = _.partial(url.resolve, 'http://localhost:' + port);
@@ -22,7 +22,7 @@ describe('server', function(){
   var client = request.defaults({json : true});
 
   before(function(){
-    bounceback.listen(port);
+    reflector.listen(port);
   });
 
   describe('response JSON',function(){    
@@ -37,7 +37,7 @@ describe('server', function(){
   });
 
   after(function(){
-    bounceback.listen(4000);
+    reflector.listen(4000);
   });
 
 });
