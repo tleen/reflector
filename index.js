@@ -14,8 +14,7 @@ module.exports = function(config){
   app.use(express.bodyParser());
 
   app.all('*',function(req, res){
-    // bounce as error
-  
+    // bounce as error  
     var meta = _.extend({date : new Date()}, _.pick(req, 'path'));
     var response = _.extend({ _meta : meta}, req.query, req.body);
     res.json(response);

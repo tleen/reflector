@@ -21,7 +21,6 @@ var client = request.defaults({json : true});
 
 describe('server', function(){
 
-
   describe('response JSON',function(){    
     var reflector = require('..')();
     before(function(done){
@@ -121,13 +120,23 @@ describe('server', function(){
 	});
       });
     });
-    after(function(){
-      reflector.server.close();
+    after(function(done){
+      reflector.server.close(done);
     });
 
   });
 
-  describe('forced errors', function(){
+  describe('errors', function(){
+    var reflector = require('..')();
+    before(function(done){
+      var server = require('http').createServer(reflector);
+      reflector.server = server;
+      server.listen(port, done);
+    });
+
+    after(function(done){
+      reflector.server.close(done);
+    });
 
   });
 
