@@ -1,6 +1,7 @@
 'use strict';
 
-var moment = require('moment'),
+var async = require('async'),
+moment = require('moment'),
 pkg = require('../package.json'),
 request = require('request'),
 should = require('should'),
@@ -127,11 +128,28 @@ describe('server', function(){
   });
 
   describe('errors', function(){
-    var reflector = require('..')();
+    var reflector = require('..')({
+      errors : true
+    });
     before(function(done){
       var server = require('http').createServer(reflector);
       reflector.server = server;
       server.listen(port, done);
+    });
+
+    it('should return ~5% errors', function(done){
+      this.timeout(10000);
+      async.times(1000, function(i, next){
+	client.get(testUrl(''), function(err, response, json){
+	  if(err) return next(err);
+	  else return next(null, response.statusCode);
+	});
+      }, function(err, codes){
+	var codeCount = _.countBy(codes, function(code){ return code; });
+	var errCount = _.chain(codeCount).omit('200').reduce(function(sum, count){ return (sum + count); }, 0).value();
+	errCount.should.be.approximately(50,15);
+	return done(err);
+      });
     });
 
     after(function(done){
