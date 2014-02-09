@@ -14,19 +14,21 @@ describe('versioning', function(){
   });
 });
 
+
+var port = 8111;
+var testUrl = _.partial(url.resolve, 'http://localhost:' + port);
+var client = request.defaults({json : true});
+
 describe('server', function(){
-  var reflector = require('..')();
-  var port = 8111;
 
-  var testUrl = _.partial(url.resolve, 'http://localhost:' + port);
-
-  var client = request.defaults({json : true});
-
-  before(function(){
-    reflector.listen(port);
-  });
 
   describe('response JSON',function(){    
+    var reflector = require('..')();
+    before(function(done){
+      var server = require('http').createServer(reflector);
+      reflector.server = server;
+      server.listen(port, done);
+    });
 
     describe('structure', function(){
       it('should have meta info', function(done){      
@@ -82,20 +84,23 @@ describe('server', function(){
       var tests = [
 	{first: 1, second : 2, third : 3},
 	{'a string' : 'a value'},
-	{'a deeper object' : {'key one' : 'value one', key2 : 2}}
+	{'a deeper object' : {'key one' : 'value one', key2 : 2}},
+	{'date' : (new Date()).toString()}
       ];
       describe('http method',  function(){
-	describe('GET', function(){
-	  tests.forEach(function(test, i){
-	    it('should match for test #' + i, function(done){
-	      client({
-		uri : testUrl('test/get/' + i),
-		method : 'GET',
+	['GET','PUT','DELETE'].forEach(function(method){
+	  describe(method, function(){
+	    tests.forEach(function(test, i){
+	      it('should match for test #' + i, function(done){
+		client({
+		  uri : testUrl('test/get/' + i),
+		  method : method,
 		qs : test}, function(err, response, json){
 		  if(err) return done(err);
 		  _.omit(json,'_meta').should.eql(test);
 		  return done();
-	      });	      
+		});	      
+	      });
 	    });
 	  });
 	});
@@ -115,8 +120,11 @@ describe('server', function(){
 	  });
 	});
       });
-
     });
+    after(function(){
+      reflector.server.close();
+    });
+
   });
 
   describe('forced errors', function(){
@@ -124,9 +132,4 @@ describe('server', function(){
   });
 
   
-
-  after(function(){
-    reflector.listen(4000);
-  });
-
 });
