@@ -1,13 +1,15 @@
 'use strict';
 
-var express= require('express'),
+var express = require('express'),
+http = require('http'),
 pkg = require('./package.json'),
 _ = require('underscore');
 
 module.exports = function(config){
   var configuration = _.defaults({}, config, {
    // add defaults here
-    errors : false
+    errors : false,
+    port : 80
   });
 
   var app = express();
@@ -31,6 +33,16 @@ module.exports = function(config){
   });
 
   app.use(app.router);
-  app.version = pkg.version;
-  return app;
+
+  var server = http.createServer(app);
+
+  return {
+    start : function(callback){
+      return server.listen(configuration.port, callback);
+    },
+    stop : function(callback){
+      return server.close(callback);
+    },
+    version : pkg.version
+  };
 };

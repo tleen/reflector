@@ -23,12 +23,8 @@ var client = request.defaults({json : true});
 describe('server', function(){
 
   describe('response JSON',function(){    
-    var reflector = require('..')();
-    before(function(done){
-      var server = require('http').createServer(reflector);
-      reflector.server = server;
-      server.listen(port, done);
-    });
+    var reflector = require('..')({port : port});
+    before(reflector.start);
 
     describe('structure', function(){
       it('should have meta info', function(done){      
@@ -121,21 +117,13 @@ describe('server', function(){
 	});
       });
     });
-    after(function(done){
-      reflector.server.close(done);
-    });
+    after(reflector.stop);
 
   });
 
   describe('errors', function(){
-    var reflector = require('..')({
-      errors : true
-    });
-    before(function(done){
-      var server = require('http').createServer(reflector);
-      reflector.server = server;
-      server.listen(port, done);
-    });
+    var reflector = require('..')({errors : true, port : port});
+    before(reflector.start);
 
     it('should return ~5% errors', function(done){
       this.timeout(10000);
@@ -152,9 +140,7 @@ describe('server', function(){
       });
     });
 
-    after(function(done){
-      reflector.server.close(done);
-    });
+    after(reflector.stop);
 
   });
 
