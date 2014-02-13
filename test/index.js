@@ -39,7 +39,7 @@ describe('server', function(){
 	it('should have properties', function(done){
 	  client.get(testUrl(''), function(err, response, json){
 	    if(err) return done(err);
-	    json._meta.should.be.an.Object.and.have.properties('date', 'path');
+	    json._meta.should.be.an.Object.and.have.properties('count', 'date', 'path');
 	    return done();
 	  });
 	});
@@ -54,9 +54,18 @@ describe('server', function(){
 	  });
 	});
 
+	it('should have a count of four', function(done){
+	  client.get(testUrl(''), function(err, response, json){
+	    if(err) return done(err);
+	    json._meta.count.should.be.a.Number;
+	    json._meta.count.should.be.exactly(4);
+	    return done();
+	  });
+	});
+
       });
     });
-
+    
     describe('returned content',function(){
       describe('empty input', function(){	
 	it('should return just meta', function(done){      
@@ -75,6 +84,18 @@ describe('server', function(){
 	  });
 	});
       });
+
+
+    describe('incrementing count', function(){
+      it('should have a count up to 10', function(done){
+	async.timesSeries(10, function(n, next){
+	  client.get(testUrl('test/increment'), function(err, response, json){
+	    json._meta.count.should.be.exactly(n+1);
+	    return next(err);
+	  });
+	}, done);
+      });
+    });
 
 
       var tests = [
