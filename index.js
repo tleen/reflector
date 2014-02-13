@@ -14,6 +14,8 @@ module.exports = function(config){
 
   var app = express();
   app.use(express.bodyParser());
+  
+  var pathCount = {};
 
   // if errors is true
   var errorGenerate = (function(hasErrors){
@@ -27,7 +29,11 @@ module.exports = function(config){
   })(configuration.errors);
   
   app.all('*', errorGenerate, function(req, res){
-    var meta = _.extend({date : new Date()}, _.pick(req, 'path'));
+    var path = req.path;
+    if(!_.has(pathCount,path)) pathCount[path] = 0;
+    pathCount[path]++;
+
+    var meta = {date : new Date(), path : path, count : pathCount[path]};
     var response = _.extend({ _meta : meta}, req.query, req.body);
     return res.json(response);
   });
