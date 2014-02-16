@@ -167,3 +167,31 @@ describe('server', function(){
 
   
 });
+
+
+describe('example test', function(){
+  var reflector = require('..');
+  var server = reflector({port : 8001});
+  before(server.start);
+ 
+  it('should return name-value pairs', function(done){
+    request({
+      url : 'http://localhost:8001/some/path?someproperty=somevalue&anotherproperty=anothervalue',
+      json : true}, function(err, response, json){
+	if(err) return done(err);
+	json._meta.should.be.an.Object.and.have.properties('count', 'date', 'path');
+/*
+* Returned object is:
+{ _meta: 
+  { date: '2014-02-16T17:53:27.624Z', // whatever the request time is
+    path: '/some/path', // arbritary path used
+    count: 1 }, // first time this path was used
+  someproperty: 'somevalue',
+  anotherproperty: 'anothervalue' }
+*/
+	return done();
+      });
+  });
+  
+  after(server.stop);
+});
