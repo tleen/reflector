@@ -3,7 +3,7 @@
   "description" : "Simple http server used as a stub for testing, will return any parameters sent (with errors if needed).",
   "main" : "./index",
   "author" : "Thomas Leen",
-  "version" : "0.0.3",
+  "version" : "0.0.4",
   "repository" : {
     "type" : "git",
     "url" : "https://github.com/tleen/reflector.git"
@@ -30,10 +30,12 @@
     "test" : "node_modules/grunt-cafe-mocha/node_modules/mocha/bin/mocha test/*.js"
   }, 
   "keywords" : [
-    "reflector",
+    "api",
     "http",
     "simple",
+    "server",
     "stub",
-    "testing"
+    "testing",
+    "web"
   ]
 }
