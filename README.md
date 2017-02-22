@@ -21,7 +21,7 @@ Meta data is helpful for informing tests and debugging. The returned JSON object
 
 ## Example
 
-Here is reflector being used in a [mocha](http://visionmedia.github.io/mocha/)/[should](https://github.com/visionmedia/should.js/)/[request](https://github.com/mikeal/request) test (see a more in-depth example at [retainer](https://github.com/tleen/retainer/blob/master/test/index.js)):
+Here is reflector being used in a [mocha](http://mochajs.org/)/[should](https://github.com/visionmedia/should.js/)/[request](https://github.com/mikeal/request) test (see a more in-depth example at [retainer](https://github.com/tleen/retainer/blob/master/test/index.js)):
 
 ```javascript
 
